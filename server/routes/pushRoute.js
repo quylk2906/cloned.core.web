@@ -7,6 +7,7 @@ const controller = pushNotificationController();
 const router = () => {
   pushRouter.route('/singlePush').post(controller.singlePush);
   pushRouter.route('/multiPush').post(controller.multiPush);
+  pushRouter.route('/emailSend').post(controller.emailSend);
   return pushRouter;
 };
 

@@ -1,4 +1,5 @@
 import * as httpHelpers from '../helpers/httpResponseHelper';
+import nodeMailer from '../../server/api/nodemailer/index.js'
 
 import { initializeApp, credential as _credential, messaging } from 'firebase-admin';
 
@@ -43,9 +44,23 @@ const pushNotificationController = () => {
     httpHelpers.buildGetSuccessResponse(res, { msg: 'Login with facebook successfully' });
   };
 
+  const emailSend = async (req, res) => {
+    try {
+      const {email, useTemplate} = req.body;
+      if(!email) {
+        return httpHelpers.buildNotFoundErrorResponse(res, {msg: 'Can not find email to send'});
+      }
+      await nodeMailer({email, useTemplate});
+      httpHelpers.buildPostSuccessResponse(res, {msg: 'Email send successfull'});
+
+    } catch (err) {       
+       return httpHelpers.buildInternalServerErrorResponse(res);
+    }
+  };
   return {
     singlePush,
-    multiPush
+    multiPush,
+    emailSend
   };
 };
 
