@@ -8,7 +8,6 @@ export const findUserByUsername = async username => {
 };
 
 const handleRegisterUser = async (req, res, profile) => {
-  console.log('profile', profile);
   let user = await findUserByUsername(profile.id);
   let token = undefined;
   if (user) {
@@ -118,7 +117,7 @@ const userController = () => {
           return next(authErr);
         }
         const { profile } = facebookData;
-        await handleRegisterUser(req, res, next, profile);
+        await handleRegisterUser(req, res, profile);
       } catch (err) {
         return httpHelpers.buildInternalServerErrorResponse(res);
       }
@@ -143,9 +142,8 @@ const userController = () => {
         if (authErr) {
           return next(authErr);
         }
-        console.log('googleData', googleData);
         const { profile } = googleData;
-        await handleRegisterUser(req, res, next, profile);
+        await handleRegisterUser(req, res, profile);
       } catch (err) {
         httpHelpers.buildInternalServerErrorResponse(res);
       }
@@ -168,9 +166,8 @@ const userController = () => {
           if (authErr) {
             return next(authErr);
           }
-          console.log('linkedinData', linkedinData);
           const { profile } = linkedinData;
-          await handleRegisterUser(req, res, next, profile);
+          await handleRegisterUser(req, res, profile);
         } catch (err) {
           httpHelpers.buildInternalServerErrorResponse(res);
         }
@@ -188,7 +185,6 @@ const userController = () => {
         if (authErr) {
           return next(authErr);
         }
-        console.log('twitterData', twitterData);
         const { profile } = twitterData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
