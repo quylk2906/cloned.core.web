@@ -60,7 +60,6 @@ const buildNotFoundErrorResponse = (res, msg) => {
 };
 
 const buildInternalServerErrorResponse = (res, msg) => {
-  console.log('error', msg);
   return res.status(INTERNAL_SERVER_ERROR).json({
     status: ERROR,
     message: 'Internal server error. Please contact with administrator',

@@ -39,7 +39,6 @@ const pushNotificationController = () => {
   };
 
   const multiPush = async (req, res) => {
-    console.log('req.userData', req.userData);
     httpHelpers.buildGetSuccessResponse(res, { msg: 'Login with facebook successfully' });
   };
 

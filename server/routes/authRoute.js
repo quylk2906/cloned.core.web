@@ -23,6 +23,10 @@ const router = () => {
 
   authRouter.route('/linkedin/callback').get(controller.authenticateLinkedinCallback);
 
+  authRouter.route('/twitter').get(controller.authenticateTwitter);
+
+  authRouter.route('/twitter/callback').get(controller.authenticateTwitterCallback);
+
   authRouter.route('/profile').get(controller.profile);
 
   authRouter.route('/logout').get(controller.logout);

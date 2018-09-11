@@ -7,10 +7,12 @@ export const findUserByUsername = async username => {
   return await User.findOne({ username: username });
 };
 
-const handleRegisterUser = async (req, res, next, profile) => {
+const handleRegisterUser = async (req, res, profile) => {
+  console.log('profile', profile);
   let user = await findUserByUsername(profile.id);
-  let token = signToken(user);
+  let token = undefined;
   if (user) {
+    token = signToken(user);
     return httpHelpers.buildGetSuccessResponse(res, { message: 'User already created.', user, token });
   }
   user = new User({
@@ -176,6 +178,26 @@ const userController = () => {
     )(req, res, next);
   };
 
+  const authenticateTwitter = (req, res) => {
+    passport.authenticate('twitter', { session: false })(req, res);
+  };
+
+  const authenticateTwitterCallback = (req, res, next) => {
+    passport.authenticate('twitter', async (authErr, twitterData) => {
+      try {
+        if (authErr) {
+          return next(authErr);
+        }
+        console.log('twitterData', twitterData);
+        const { profile } = twitterData;
+        await handleRegisterUser(req, res, profile);
+      } catch (err) {
+        console.log('err', err);
+        httpHelpers.buildInternalServerErrorResponse(res);
+      }
+    })(req, res, next);
+  };
+
   const logout = (req, res) => {
     req.logout();
     res.redirect('/');
@@ -190,6 +212,8 @@ const userController = () => {
     authenticateGoogleCallback,
     authenticateLinkedin,
     authenticateLinkedinCallback,
+    authenticateTwitter,
+    authenticateTwitterCallback,
     profile,
     logout,
     getAll
