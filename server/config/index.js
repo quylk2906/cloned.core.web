@@ -26,10 +26,9 @@ export const googleConfig = {
 };
 
 export const twitterConfig = {
-  consumerKey: '',
-  consumerSecret: '',
+  consumerKey: 'B4v1L8zqLF66n37pZ5ImAGpKV',
+  consumerSecret: '8EuopkNfcfRF4W7PEJ7piYG0zb7zsIAWEWe62MWV42Afu9DiDm',
   callbackURL: '/auth/twitter/callback',
-  profileFields: ['id', 'displayName', 'photos', 'email'],
   passReqToCallback: true
 };
 export const linkedinConfig = {
