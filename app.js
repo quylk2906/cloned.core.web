@@ -5,28 +5,29 @@ import https from 'https';
 // import bookRouter from "./server/routes/bookRoute";
 import authRouter from './server/routes/authRoute';
 import pushRouter from './server/routes/pushRoute';
-// import authRouter from './server/routes/authRoute';
-import session from 'express-session';
+
 import chalk from 'chalk';
 import dotenv from 'dotenv';
 import logger from 'morgan';
 import expressValidator from 'express-validator';
 import expressStatusMonitor from 'express-status-monitor';
 import { verifyToken } from './server/helpers/jwtHelper';
-import connectMongo from 'connect-mongo';
-import mongoose from './server/database/mongoose';
-const mongoStore = connectMongo(session);
+// import session from 'express-session';
+// import connectMongo from 'connect-mongo';
+// import mongoose from './server/database/mongoose';
+// const mongoStore = connectMongo(session);
+import './server/database/mongoose';
+import authPassport from './server/config/passport';
 import cors from 'cors';
 import { join, resolve } from 'path';
-import authPassport from './server/config/passport';
 
-import path from 'path';
 import { readFileSync } from 'fs';
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
 dotenv.load({ path: 'config.env' });
 const port = process.env.PORT || 5011;
+
 const certOptions = {
   // key: readFileSync(resolve("./server/config/fake-certificate/server-key.pem")),
   // cert: readFileSync(resolve("./server/config/fake-certificate/server-cert.pem")),
@@ -48,19 +49,19 @@ app.set('views', join(__dirname, 'views'));
 /**
  * Connect to MongoDB.
  */
-app.use(
-  session({
-    secret: process.env.JWT_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: new mongoStore({
-      mongooseConnection: mongoose.connection
-    }),
-    cookie: {
-      maxAge: 180 * 60 * 1000
-    }
-  })
-);
+// app.use(
+//   session({
+//     secret: process.env.JWT_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     store: new mongoStore({
+//       mongooseConnection: mongoose.connection
+//     }),
+//     cookie: {
+//       maxAge: 180 * 60 * 1000
+//     }
+//   })
+// );
 
 /**
  * Express configuration.

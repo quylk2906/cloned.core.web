@@ -58,4 +58,4 @@ userModel.methods.isValidPassword = async function(newPassword) {
   }
 };
 
-module.exports = mongoose.model('User', userModel);
+export default mongoose.model('User', userModel);

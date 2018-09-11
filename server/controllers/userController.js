@@ -64,7 +64,6 @@ const userController = () => {
   };
 
   const profile = (req, res) => {
-    console.log('req.userData', req.userData);
     httpHelpers.buildGetSuccessResponse(res, { msg: 'Login with facebook successfully' });
   };
 
@@ -87,6 +86,7 @@ const userController = () => {
     if (errors) {
       return httpHelpers.buildValidationErrorResponse(res, errors);
     }
+
     /* End of field Validation */
     passport.authenticate('local', { session: false }, (authErr, user) => {
       try {
@@ -97,7 +97,6 @@ const userController = () => {
           return httpHelpers.buildNotFoundErrorResponse(res, 'User not found');
         }
         const token = signToken(user);
-
         return httpHelpers.buildPostSuccessResponse(res, { token });
       } catch (err) {
         return httpHelpers.buildInternalServerErrorResponse(res);
