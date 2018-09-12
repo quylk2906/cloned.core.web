@@ -41,7 +41,7 @@ const signToken = user => {
   );
 };
 
-module.exports = {
+export default {
   signToken,
   verifyToken
 };
