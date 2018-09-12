@@ -86,7 +86,7 @@ authPassport(app);
 /**
  * Protect authorized routes.
  */
-// app.use(verifyToken);
+app.use(verifyToken);
 
 /**
  * Primary app routes.

@@ -99,6 +99,7 @@ const userController = () => {
         const token = signToken(user);
         return httpHelpers.buildPostSuccessResponse(res, { token });
       } catch (err) {
+        console.log(err);
         return httpHelpers.buildInternalServerErrorResponse(res);
       }
     })(req, res, next);
