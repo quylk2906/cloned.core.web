@@ -18,7 +18,7 @@ var smtpTransport = createTransport({
 smtpTransport.use(
   'compile',
   hbs({
-    viewPath: 'server/views/email/email1',
+    viewPath: 'server/views/email/',
     extName: '.hbs'
   })
 );
@@ -26,10 +26,12 @@ const nodeMailer = async data => {
   let mailOptions = {};
   mailOptions = {
     from: 'Welcome Heroku App', // sender address
-    to: data.emails, // list of receivers
+    to: data.email, // list of receivers
     subject: 'Notification email ( Not reply)', // Subject line
     template: 'notifi-email',
-    context: {}
+    context: {
+      name: data.email
+    }
   };
 
   // console.log(mailOptions);
