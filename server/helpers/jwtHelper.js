@@ -1,6 +1,8 @@
 import JWT from 'jsonwebtoken';
 import { findUserByUsername } from '../controllers/userController';
 
+const EXPIRY_DATE = '30 days'; // Eg: 60, "2 days", "10h", "7d"
+
 const verifyToken = (req, res, next) => {
   try {
     if (req.path !== '/auth/signIn' && req.path !== '/auth/signUp' && req.path !== '/') {
@@ -37,7 +39,11 @@ const signToken = user => {
       iat: new Date().getTime(),
       exp: new Date().setDate(new Date().getDate() + 1)
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
+    {
+      // options
+      expiresIn: EXPIRY_DATE
+    }
   );
 };
 
