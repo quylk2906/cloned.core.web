@@ -113,6 +113,7 @@ const userController = () => {
   const authenticateFacebookCallback = (req, res, next) => {
     passport.authenticate('facebook', { session: false }, async (authErr, facebookData) => {
       try {
+        console.log(facebookData);
         if (authErr) {
           return next(authErr);
         }
