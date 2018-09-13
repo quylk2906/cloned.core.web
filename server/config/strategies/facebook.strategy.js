@@ -6,7 +6,6 @@ import { facebookConfig } from '../index';
 export default () => {
   passport.use(
     new FacebookStrategy(facebookConfig, async (req, accessToken, refreshToken, profile, done) => {
-      // const data =  profile.
       try {
         if (!accessToken) {
           done(null, false);

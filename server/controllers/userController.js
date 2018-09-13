@@ -12,7 +12,7 @@ const handleRegisterUser = async (req, res, profile) => {
   let token = undefined;
   if (user) {
     token = signToken(user);
-    return httpHelpers.buildGetSuccessResponse(res, { message: 'User already created.', user, token });
+    return httpHelpers.buildGetSuccessResponse(res, { message: 'The user exists in system.', user, token });
   }
   user = new User({
     username: profile.id,
@@ -56,10 +56,10 @@ const userController = () => {
 
         return httpHelpers.buildPostSuccessResponse(res, { token });
       } else {
-        return httpHelpers.buildInternalServerErrorResponse(res);
+        return httpHelpers.buildInternalServerErrorResponse(res, err);
       }
     } catch (err) {
-      return httpHelpers.buildInternalServerErrorResponse(res);
+      return httpHelpers.buildInternalServerErrorResponse(res, err);
     }
   };
 
@@ -99,7 +99,7 @@ const userController = () => {
         const token = signToken(user);
         return httpHelpers.buildPostSuccessResponse(res, { token });
       } catch (err) {
-        return httpHelpers.buildInternalServerErrorResponse(res);
+        return httpHelpers.buildInternalServerErrorResponse(res, err);
       }
     })(req, res, next);
   };
@@ -118,7 +118,7 @@ const userController = () => {
         const { profile } = facebookData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
-        return httpHelpers.buildInternalServerErrorResponse(res);
+        return httpHelpers.buildInternalServerErrorResponse(res, err);
       }
     })(req, res, next);
   };
@@ -144,7 +144,7 @@ const userController = () => {
         const { profile } = googleData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
-        httpHelpers.buildInternalServerErrorResponse(res);
+        httpHelpers.buildInternalServerErrorResponse(res, err);
       }
     })(req, res, next);
   };
@@ -168,7 +168,7 @@ const userController = () => {
           const { profile } = linkedinData;
           await handleRegisterUser(req, res, profile);
         } catch (err) {
-          httpHelpers.buildInternalServerErrorResponse(res);
+          httpHelpers.buildInternalServerErrorResponse(res, err);
         }
       }
     )(req, res, next);
@@ -187,8 +187,7 @@ const userController = () => {
         const { profile } = twitterData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
-        console.log('err', err);
-        httpHelpers.buildInternalServerErrorResponse(res);
+        httpHelpers.buildInternalServerErrorResponse(res, err);
       }
     })(req, res, next);
   };

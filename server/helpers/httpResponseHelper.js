@@ -59,11 +59,11 @@ const buildNotFoundErrorResponse = (res, msg) => {
   });
 };
 
-const buildInternalServerErrorResponse = (res, msg) => {
+const buildInternalServerErrorResponse = (res, err) => {
+  console.log('err', err);
   return res.status(INTERNAL_SERVER_ERROR).json({
     status: ERROR,
-    message: 'Internal server error. Please contact with administrator',
-    msg
+    message: 'Internal server error. Please contact with administrator'
   });
 };
 
