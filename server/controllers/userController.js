@@ -31,7 +31,7 @@ const userController = () => {
     try {
       /* Field validation */
       req
-        .checkBody('username', 'Username is not valid')
+        .checkBody('username', 'Username is not valid email')
         .isEmail()
         .trim();
       req
@@ -55,7 +55,7 @@ const userController = () => {
       if (newUser) {
         const token = signToken(newUser);
 
-        return httpHelpers.buildPostSuccessResponse(res, { token });
+        return httpHelpers.buildPostSuccessResponse(res, { newUser, token });
       } else {
         return httpHelpers.buildInternalServerErrorResponse(res, err);
       }
@@ -64,8 +64,18 @@ const userController = () => {
     }
   };
 
-  const profile = (req, res) => {
-    httpHelpers.buildGetSuccessResponse(res, { msg: 'Login with facebook successfully' });
+  const profile = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const user = await User.findById(id);
+      if (user) {
+        httpHelpers.buildGetSuccessResponse(res, { user });
+      } else {
+        httpHelpers.buildNotFoundErrorResponse(res, { msg: 'User not found.' });
+      }
+    } catch (err) {
+      httpHelpers.buildInternalServerErrorResponse(res, err);
+    }
   };
 
   const getAll = async (req, res) => {

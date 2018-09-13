@@ -5,7 +5,7 @@ const EXPIRY_DATE = '30 days'; // Eg: 60, "2 days", "10h", "7d"
 
 export const verifyToken = (req, res, next) => {
   try {
-    if (req.path !== '/auth/signIn' && req.path !== '/auth/signUp' && req.path !== '/') {
+    if (req.path !== '/auth/signIn' && req.path !== '/auth/signUp' && req.path !== '/' && req.path !== '/auth') {
       const token = req.headers['x-access-token'];
 
       if (!token) {

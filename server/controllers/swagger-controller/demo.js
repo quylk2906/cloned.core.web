@@ -1,19 +1,9 @@
-var q = require('q');
-var lib = require(process.cwd() + '/app/lib/init');
-var PriorityModel = new mongo.priorities;
 /**
  * @swagger
  * resourcePath: /Priorities
  * description: All about API for Priorities
  */
-var extendMethods = {
-    create:create,
-    getByOwner: getByOwner,
-    getById: getById,
-    updateById: updateById,
-    deleteById: deleteById,
-};
-module.exports = _.extend( extendMethods);
+
 /**
  * @swagger
  * path: /priorities
@@ -43,26 +33,7 @@ module.exports = _.extend( extendMethods);
  *          code: 404
  *          reason: Resource not found
  */
-function create(req, res, next) {
-    var defer = q.defer();
-    var data = req.body;
-    var userId = _.getUserIdOrSwitchId(req);
-    if(!_.isObject(data)){
-        defer.reject(errorHandler.badRequest('Invalid parameters!'));
-    }else{
-        data.owner = userId;
-        PriorityModel
-            .create(data)
-            .then(function (result) {
-                defer.resolve(result);
-            })
-            .catch(function(err) {
-                defer.reject(err);
-            });
 
-    }
-    return defer.promise;
-}
 /**
  * @swagger
  * path: /priorities
@@ -96,51 +67,7 @@ function create(req, res, next) {
  *          code: defaults
  *
  */
-function getByOwner(req, res, next ) {
-    var defer = q.defer();
-    var userId = _.getUserIdOrSwitchId(req);
-    PriorityModel
-        .getByOwner(userId)
-        .then(function (result) {
-            if(!result || result.length === 0){
-                createDefaultPriorityList(req).then(function(defaultList){
-                   defer.resolve(defaultList);
-                }).catch(function(err){
-                    defer.reject(err);
-                });
-            }else{
-                defer.resolve(result);
-            }
-        })
-        .catch(function(err) {
-            defer.reject(err);
-        });
-    return defer.promise;
-}
 
-function createDefaultPriorityList(req){
-    var defer = q.defer();
-    var userId = req.decoded.body.sub;
-    var promises = [];
-    var defaultPriorityList = ["**SAFETY ALERT**","*ASSISTANCE*", "*EVENT*", "*REMINDER*", "*INQUIRY*", "*PRAYERS*", "*CODE BLUE*", "Notice"];
-    _.each(defaultPriorityList, function(item){
-        var objData = {
-          name: item,
-          owner: userId
-        };
-        promises.push(PriorityModel.create(objData));
-    });
-    q.all(promises).then(function(result){
-        PriorityModel.getByOwner(userId).then(function(priorities){
-            defer.resolve(priorities);
-        }).catch(function(err){
-            defer.reject(errorHandler.mongooseErrorHandler(err));
-        });
-    }).catch(function(err){
-        defer.reject(errorHandler.notFound(err));
-    });
-    return defer.promise;
-}
 /**
  * @swagger
  * path: /priorities/{id}
@@ -174,19 +101,7 @@ function createDefaultPriorityList(req){
  *          code: defaults
  *
  */
-function getById(req, res, next ) {
-    var defer = q.defer();
-    var id = req.params.id;
-    PriorityModel
-        .getById(id)
-        .then(function (result) {
-            defer.resolve(result);
-        })
-        .catch(function(err) {
-            defer.reject(err);
-        });
-    return defer.promise;
-}
+
 /**
  * @swagger
  * path: /priorities/{id}
@@ -222,20 +137,7 @@ function getById(req, res, next ) {
  *          code: 404
  *          reason: Resource not found
  */
-function updateById(req, res, next ) {
-    var defer = q.defer();
-    var id = req.params.id;
-    var data = req.body;
-    PriorityModel
-        .updateById(id, data)
-        .then(function (result) {
-            defer.resolve(result);
-        })
-        .catch(function(err) {
-            defer.reject(err);
-        });
-    return defer.promise;
-}
+
 /**
  * @swagger
  * path: /priorities/{id}
@@ -269,21 +171,6 @@ function updateById(req, res, next ) {
  *          code: defaults
  *
  */
-function deleteById(req, res, next ) {
-    var defer = q.defer();
-    var id = req.params.id;
-    var data = req.body;
-    PriorityModel
-        .delete(id, data)
-        .then(function (result) {
-            defer.resolve(result);
-        })
-        .catch(function(err) {
-            defer.reject(err);
-        });
-    return defer.promise;
-}
-
 
 /**
  * @swagger
@@ -302,3 +189,7 @@ function deleteById(req, res, next ) {
  *       name:
  *         type: String
  */
+
+function name(params) {
+  return;
+}

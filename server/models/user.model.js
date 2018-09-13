@@ -21,7 +21,7 @@ const userModel = mongoose.Schema(
     },
     provider: {
       type: String,
-      default: 'Local'
+      default: 'local'
     }
   },
   {

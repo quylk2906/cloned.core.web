@@ -5,7 +5,7 @@ const authRouter = express.Router();
 const controller = userController();
 
 const router = () => {
-  authRouter.route('/').get(controller.getAll);
+  authRouter.route('/users').get(controller.getAll);
 
   authRouter.route('/signUp').post(controller.signUp);
 
@@ -27,7 +27,7 @@ const router = () => {
 
   authRouter.route('/twitter/callback').get(controller.authenticateTwitterCallback);
 
-  authRouter.route('/profile').get(controller.profile);
+  authRouter.route('/users/:id').get(controller.profile);
 
   authRouter.route('/logout').get(controller.logout);
 

@@ -19,6 +19,7 @@ import session from 'express-session';
 
 import authPassport from './server/config/passport';
 import cors from 'cors';
+import { init } from 'swagger-express';
 import { join, resolve } from 'path';
 import { readFileSync } from 'fs';
 /**
@@ -28,8 +29,6 @@ dotenv.load({ path: 'config.env' });
 const port = process.env.PORT || 5011;
 
 const certOptions = {
-  // key: readFileSync(resolve("./server/config/fake-certificate/server-key.pem")),
-  // cert: readFileSync(resolve("./server/config/fake-certificate/server-cert.pem")),
   key: readFileSync(resolve('./server/config/fake-certificate/server.key')),
   cert: readFileSync(resolve('./server/config/fake-certificate/server.cert'))
   // requestCert: false,
@@ -46,8 +45,24 @@ const app = express();
 app.set('views', join(__dirname, 'views'));
 
 /**
+ * Integrate Swagger to Node App.
+ */
+const options = {
+  apiVersion: '1.0',
+  swaggerVersion: '1.0',
+  basePath: process.env.BASEPATH || 'http://localhost:5011',
+  swaggerURL: '/explorer',
+  swaggerJSON: '/api-docs.json',
+  swaggerUI: './server/views/swagger',
+  apis: ['./server/controllers/swagger-controller/user.js']
+};
+
+app.use(init(app, options));
+
+/**
  * Connect to MongoDB.
  */
+
 import './server/database/mongoose';
 
 app.use(
@@ -69,14 +84,25 @@ app.use(
  */
 app.use(expressStatusMonitor());
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  bodyParser.json({
+    /*limit: '50mb' */
+  })
+);
+app.use(bodyParser.urlencoded({ /*limit: '50mb', */ extended: true }));
 app.use(expressValidator());
 
 /**
  * Allow requests from Angular
  */
 app.use(cors());
+
+/**
+ if (process.env.NODE_ENV === 'production') {
+ } else {
+   
+ }
+ */
 
 /**
  * Passport configuration.
@@ -93,8 +119,12 @@ authPassport(app);
  * Primary app routes.
  */
 
-app.use('/auth', authRouter());
-app.use('/push', pushRouter());
+// use version API and set default version
+const v1 = express.Router();
+v1.use('/auth', authRouter());
+v1.use('/push', pushRouter());
+app.use('/api/v1', v1);
+// app.use('/', v1);
 app.get('/', function(req, res) {
   res.json({ msg: 'You just login as ' + new Date().toUTCString() });
 });
@@ -102,11 +132,11 @@ app.get('/', function(req, res) {
 /**
  * Start Express server.
  */
-// app.listen(port, function(err) {
-//   console.log(chalk.blue("Running server on port " + port));
-// });
-
-const server = https.createServer(certOptions, app);
-server.listen(port, err => {
+app.listen(port, function(err) {
   console.log(chalk.blue('Running server on port ' + port));
 });
+
+// const server = https.createServer(certOptions, app);
+// server.listen(port, err => {
+//   console.log(chalk.blue('Running server on port ' + port));
+// });
