@@ -38,3 +38,9 @@ export const linkedinConfig = {
   passReqToCallback: true,
   profileFields: ['id', 'first-name', 'last-name', 'email-address', 'headline']
 };
+
+export const smsConfig = {
+  accountSid : 'AC9f517396ef5a8ccdf0a147420e606b56',
+  authToken : '9be7b54fdea929b8edb5676dac56f6cd',
+  fromNumber: '+1 813 547 5750'
+}

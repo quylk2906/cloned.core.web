@@ -12,8 +12,11 @@ export const verifyToken = (req, res, next) => {
         return res.status(403).send({ auth: false, message: 'No token provided.' });
       }
       JWT.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-          return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        if (err.name === 'JsonWebTokenError') {
+          return res.status(500).send({ auth: false, message: err.message });
+        }
+        if (err.name === 'TokenExpiredError') {
+          return res.status(500).send({ auth: false, message: err.message });
         }
         const user = findUserByUsername(decoded.id);
 
@@ -37,17 +40,9 @@ export const signToken = user => {
       iss: 'ApiAuth',
       id: user.username,
       iat: new Date().getTime(),
-      exp: new Date().setDate(new Date().getDate() + 1)
+      exp: Math.floor(Date.now() / 1000) + 10 //10s
+      // new Date().setDate(new Date().getDate() + 1)
     },
     process.env.JWT_SECRET
-    // {
-    //   // options
-    //   expiresIn: EXPIRY_DATE
-    // }
   );
 };
-
-// export default {
-//   signToken,
-//   verifyToken
-// };
