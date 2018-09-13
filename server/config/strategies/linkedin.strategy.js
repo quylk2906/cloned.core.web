@@ -9,11 +9,7 @@ export default () => {
         if (!accessToken) {
           done(null, false);
         }
-        done(null, {
-          accessToken,
-          profile,
-          refreshToken
-        });
+        done(null, { accessToken, profile, refreshToken });
       } catch (err) {
         done(null, false);
       }

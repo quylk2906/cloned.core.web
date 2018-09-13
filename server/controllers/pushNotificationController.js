@@ -1,32 +1,26 @@
 import twilio from 'twilio';
 import * as httpHelpers from '../helpers/httpResponseHelper';
 import nodeMailer from '../../server/api/nodemailer/index.js';
-import {smsConfig} from '../config/index';
-
-import {
-  initializeApp,
-  credential as _credential,
-  messaging
-} from 'firebase-admin';
+import { smsConfig } from '../config/index';
+import { initializeApp, credential as _credential, messaging } from 'firebase-admin';
 
 // import serviceAccount from '../assets/tasty-d5d32-firebase-adminsdk-pc0ys-874e1cea47.json';
 const serviceAccount = require('../assets/tasty-d5d32-firebase-adminsdk-pc0ys-874e1cea47.json');
 
-var admin = require('firebase-admin');
+const admin = require('firebase-admin');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://tasty-d5d32.firebaseio.com'
 });
+
 const TIME_TO_LIVE = 0;
+
 const hanldePush = async (req, res) => {
-  const {
-    body
-  } = req;
+  const { body } = req;
   const deviceToken = body.deviceToken;
   const payload = {
     data: body.data || {}
   };
-  console.log('payload', payload);
   const options = {
     priority: body.priority || 'high',
     timeToLive: body.time_to_live || TIME_TO_LIVE
@@ -49,57 +43,57 @@ const pushNotificationController = () => {
     await hanldePush(req, res);
   };
 
-  const multiPush = async (req, res) => {
+  const multiPush = (req, res) => {
     httpHelpers.buildGetSuccessResponse(res, {
       msg: 'Login with facebook successfully'
     });
   };
 
   const sms = async (req, res) => {
-    const {accountSid, authToken, fromNumber} = smsConfig; 
-    const client = new twilio (accountSid, authToken);
-    const { reciveNumber } = req.body;
+    const { accountSid, authToken, fromNumber } = smsConfig;
+    const client = new twilio(accountSid, authToken);
+    const { reciveNumber, payload } = req.body;
     try {
       if (!reciveNumber) {
-        return httpHelpers.buildNotFoundErrorResponse(res, {
+        httpHelpers.buildNotFoundErrorResponse(res, {
           msg: 'Can not find a phone number to send notify'
         });
       }
       client.messages
         .create({
-          body: 'Hello there! This is an sms send from core.nodejs',
+          body: payload,
           from: fromNumber,
           to: reciveNumber //+841686326507 valid phone number
         })
         .then(message => console.log(message.sid))
-        .done(httpHelpers.buildPostSuccessResponse(res, {
-          msg: 'Sms send successfull'
-        })); 
+        .done(
+          httpHelpers.buildPostSuccessResponse(res, {
+            msg: 'Sms send successfull'
+          })
+        );
     } catch (err) {
-      return httpHelpers.buildInternalServerErrorResponse(res);
+      httpHelpers.buildInternalServerErrorResponse(res);
     }
   };
 
   const email = async (req, res) => {
     try {
-      const {
-        email,
-        useTemplate
-      } = req.body;
+      const { email, useTemplate } = req.body;
       if (!email) {
-        return httpHelpers.buildNotFoundErrorResponse(res, {
+        httpHelpers.buildNotFoundErrorResponse(res, {
           msg: 'Can not find email to send'
         });
       }
-      await nodeMailer({
+      const rs = await nodeMailer({
         email,
         useTemplate
       });
       httpHelpers.buildPostSuccessResponse(res, {
-        msg: 'Email send successfull'
+        msg: 'Email send successfull',
+        rs
       });
     } catch (err) {
-      return httpHelpers.buildInternalServerErrorResponse(res);
+      httpHelpers.buildInternalServerErrorResponse(res);
     }
   };
   return {

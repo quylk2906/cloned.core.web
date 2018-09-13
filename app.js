@@ -12,15 +12,14 @@ import logger from 'morgan';
 import expressValidator from 'express-validator';
 import expressStatusMonitor from 'express-status-monitor';
 import { verifyToken } from './server/helpers/jwtHelper';
-// import session from 'express-session';
+import session from 'express-session';
 // import connectMongo from 'connect-mongo';
 // import mongoose from './server/database/mongoose';
 // const mongoStore = connectMongo(session);
-import './server/database/mongoose';
+
 import authPassport from './server/config/passport';
 import cors from 'cors';
 import { join, resolve } from 'path';
-
 import { readFileSync } from 'fs';
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -49,19 +48,21 @@ app.set('views', join(__dirname, 'views'));
 /**
  * Connect to MongoDB.
  */
-// app.use(
-//   session({
-//     secret: process.env.JWT_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     store: new mongoStore({
-//       mongooseConnection: mongoose.connection
-//     }),
-//     cookie: {
-//       maxAge: 180 * 60 * 1000
-//     }
-//   })
-// );
+import './server/database/mongoose';
+
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    // store: new mongoStore({
+    //   mongooseConnection: mongoose.connection
+    // }),
+    cookie: {
+      maxAge: 180 * 60 * 1000
+    }
+  })
+);
 
 /**
  * Express configuration.
@@ -86,12 +87,12 @@ authPassport(app);
 /**
  * Protect authorized routes.
  */
-app.use(verifyToken);
+// app.use(verifyToken);
 
 /**
  * Primary app routes.
  */
-// app.use("/books", bookRouter());
+
 app.use('/auth', authRouter());
 app.use('/push', pushRouter());
 app.get('/', function(req, res) {

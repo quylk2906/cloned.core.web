@@ -1,5 +1,4 @@
 import passport from 'passport';
-import User from '../../models/user.model';
 import FacebookStrategy from 'passport-facebook';
 import { facebookConfig } from '../index';
 

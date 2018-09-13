@@ -9,6 +9,7 @@ export const findUserByUsername = async username => {
 
 const handleRegisterUser = async (req, res, profile) => {
   let user = await findUserByUsername(profile.id);
+  console.log('user', user);
   let token = undefined;
   if (user) {
     token = signToken(user);
@@ -123,7 +124,7 @@ const userController = () => {
     })(req, res, next);
   };
 
-  const authenticateGoogle = (req, res, next) => {
+  const authenticateGoogle = (req, res) => {
     passport.authenticate('google', {
       session: false,
       scope: [
@@ -132,7 +133,7 @@ const userController = () => {
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/plus.me openid email profile'
       ]
-    })(req, res, next);
+    })(req, res);
   };
 
   const authenticateGoogleCallback = (req, res, next) => {
