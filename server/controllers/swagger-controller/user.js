@@ -196,6 +196,107 @@
  *          code: defaults
  */
 
+ /**
+ * @swagger
+ * path: /auth/facebook/validate 
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Validate facebook accesstoken
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      parameters:
+ *        - name: body
+ *          description: body
+ *          paramType: body
+ *          required: true
+ *          dataType: validate
+ * 
+ *      errorResponses:  
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+
+ /**
+ * @swagger
+ * path: /auth/google/validate 
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Validate Google accesstoken
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      parameters:
+ *        - name: body
+ *          description: body
+ *          paramType: body
+ *          required: true
+ *          dataType: validate
+ * 
+ *      errorResponses:  
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+
+ /**
+ * @swagger
+ * path: /auth/linkedin/validate 
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Validate Linkedin accesstoken
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      parameters:
+ *        - name: body
+ *          description: body
+ *          paramType: body
+ *          required: true
+ *          dataType: validateLinkedin
+ * 
+ *      errorResponses:  
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+ 
+
+
 /**
  * @swagger
  * models:
@@ -206,6 +307,18 @@
  *         type: String
  *       password:
  *         type: String
+ * 
+ *   validate:
+ *      id: validate
+ *      properties:
+ *         access_token:
+ *            type: String
+ * 
+ *   validateLinkedin:
+ *      id: validateLinkedin
+ *      properties:
+ *         code:
+ *            type: String
 
  */
 

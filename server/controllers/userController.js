@@ -232,7 +232,7 @@ const userController = () => {
       // Step 1. Exchange authorization code for access token.
       // Step 2. Retrieve profile information about the current user.
       request.get({ url: graphApiUrl, qs: params, json: true }, async (err, response, profile) => {
-        if (err) {
+        if (response.statusCode !== 200) {
           return httpHelpers.buildInternalServerErrorResponse(res, { message: profile.error.message });
         }
         profile['provider'] = PROVIDER;
@@ -260,7 +260,7 @@ const userController = () => {
       // Step 1. Exchange authorization code for access token. (we don't need it)
       // Step 2. Retrieve profile information about the current user.
       request.get({ url: peopleApiUrl, qs: params, json: true }, async (err, response, profile) => {
-        if (err) {
+        if (response.statusCode !== 200) {
           return httpHelpers.buildInternalServerErrorResponse(res, { message: profile.error.message });
         }
         profile['provider'] = PROVIDER;
