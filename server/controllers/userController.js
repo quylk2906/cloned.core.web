@@ -1,23 +1,26 @@
 import User from '../models/user.model';
 import passport from 'passport';
+import request from 'request';
 import { signToken } from '../helpers/jwtHelper';
 import * as httpHelpers from '../helpers/httpResponseHelper';
+import { facebookConfig, googleConfig, twitterConfig, linkedinConfig } from '../config/index';
 
 export const findUserByUsername = async username => {
   return await User.findOne({ username: username });
 };
 
 const handleRegisterUser = async (req, res, profile) => {
-  let user = await findUserByUsername(profile.id);
-  console.log('user', user);
+  const username = profile.id || profile.sub;
+  let user = await findUserByUsername(username);
   let token = undefined;
   if (user) {
     token = signToken(user);
     return httpHelpers.buildGetSuccessResponse(res, { message: 'The user exists in system.', user, token });
   }
   user = new User({
-    username: profile.id,
-    fullName: profile.displayName,
+    // some of keys belong to specified social network.
+    username: username,
+    fullName: profile.displayName || profile.name,
     provider: profile.provider
   });
 
@@ -123,7 +126,6 @@ const userController = () => {
   const authenticateFacebookCallback = (req, res, next) => {
     passport.authenticate('facebook', { session: false }, async (authErr, facebookData) => {
       try {
-        console.log(facebookData);
         if (authErr) {
           return next(authErr);
         }
@@ -209,6 +211,110 @@ const userController = () => {
     res.redirect('/');
   };
 
+  /** Validate Social Access Token
+  Facebook, Google, LinkedIn, Twitter
+  */
+
+  const validateFacebook = (req, res) => {
+    const PROVIDER = 'facebook';
+    const fields = ['id', 'email', 'name'];
+    const graphApiUrl = 'https://graph.facebook.com/v3.1/me?fields=' + fields.join(',');
+    const params = {
+      access_token: req.body.access_token,
+      client_id: facebookConfig.clientID,
+      client_secret: facebookConfig.clientSecret,
+      redirect_uri: facebookConfig.callbackURL
+    };
+    try {
+      if (!req.body.access_token) {
+        return httpHelpers.buildValidationErrorResponse(res, { msg: 'Token is required!' });
+      }
+      // Step 1. Exchange authorization code for access token.
+      // Step 2. Retrieve profile information about the current user.
+      request.get({ url: graphApiUrl, qs: params, json: true }, async (err, response, profile) => {
+        if (err) {
+          return httpHelpers.buildInternalServerErrorResponse(res, { message: profile.error.message });
+        }
+        profile['provider'] = PROVIDER;
+        await handleRegisterUser(req, res, profile);
+      });
+    } catch (err) {
+      httpHelpers.buildInternalServerErrorResponse(res, err);
+    }
+  };
+
+  const validateGoogle = (req, res) => {
+    const PROVIDER = 'google';
+    const peopleApiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
+    const params = {
+      access_token: req.body.access_token,
+      client_id: googleConfig.clientID,
+      client_secret: googleConfig.clientSecret,
+      redirect_uri: googleConfig.callbackURL,
+      grant_type: 'authorization_code'
+    };
+    try {
+      if (!req.body.access_token) {
+        return httpHelpers.buildValidationErrorResponse(res, { msg: 'Token is required!' });
+      }
+      // Step 1. Exchange authorization code for access token. (we don't need it)
+      // Step 2. Retrieve profile information about the current user.
+      request.get({ url: peopleApiUrl, qs: params, json: true }, async (err, response, profile) => {
+        if (err) {
+          return httpHelpers.buildInternalServerErrorResponse(res, { message: profile.error.message });
+        }
+        profile['provider'] = PROVIDER;
+        await handleRegisterUser(req, res, profile);
+      });
+    } catch (err) {
+      httpHelpers.buildInternalServerErrorResponse(res, err);
+    }
+  };
+
+  const validateLinkedIn = (req, res) => {
+    const PROVIDER = 'linkedin';
+    const accessTokenUrl = 'https://www.linkedin.com/uas/oauth2/accessToken';
+    const peopleApiUrl = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,email-address,picture-url)';
+    const params = {
+      code: req.body.code,
+      client_id: linkedinConfig.consumerKey,
+      client_secret: linkedinConfig.consumerSecret,
+      redirect_uri: 'https://localhost:5011',
+      grant_type: 'authorization_code'
+    };
+
+    try {
+      if (!req.body.code) {
+        return httpHelpers.buildValidationErrorResponse(res, { msg: 'Token is required!' });
+      }
+      // Step 1. Exchange authorization code for access token.
+      request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
+        console.log('body', body);
+        if (response.statusCode !== 200) {
+          return res.status(500).send({ message: body.error_description });
+        }
+
+        const parms = {
+          oauth2_access_token: body.access_token,
+          format: 'json'
+        };
+        // Step 2. Retrieve profile information about the current user.
+        request.get({ url: peopleApiUrl, qs: parms, json: true }, function(err, response, profile) {
+          console.log('profile', profile);
+          if (req.header('Authorization')) {
+          }
+          // Step 1. Exchange authorization code for access token. (we don't need it)
+          // Step 2. Retrieve profile information about the current user.
+
+          // profile['provider'] = PROVIDER;
+          // await handleRegisterUser(req, res, profile);
+        });
+      });
+    } catch (err) {
+      httpHelpers.buildInternalServerErrorResponse(res, err);
+    }
+  };
+
   return {
     signUp,
     authenticateLocal,
@@ -220,6 +326,9 @@ const userController = () => {
     authenticateLinkedinCallback,
     authenticateTwitter,
     authenticateTwitterCallback,
+    validateFacebook,
+    validateGoogle,
+    validateLinkedIn,
     profile,
     logout,
     getAll

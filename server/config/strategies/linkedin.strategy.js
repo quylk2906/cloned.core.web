@@ -9,6 +9,7 @@ export default () => {
         if (!accessToken) {
           done(null, false);
         }
+        console.log('accessToken', accessToken);
         done(null, { accessToken, profile, refreshToken });
       } catch (err) {
         done(null, false);

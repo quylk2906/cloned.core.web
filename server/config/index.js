@@ -32,8 +32,8 @@ export const twitterConfig = {
   passReqToCallback: true
 };
 export const linkedinConfig = {
-  consumerKey: '78dxjxrihg9c84',
-  consumerSecret: '2GUfUGUpKPVM45DI',
+  consumerKey: '81qlarzdgliej0',
+  consumerSecret: 'nFqQA3zkYMjZMtgk',
   callbackURL: '/auth/linkedin/callback',
   passReqToCallback: true,
   profileFields: ['id', 'first-name', 'last-name', 'email-address', 'headline']
