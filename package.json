@@ -39,6 +39,7 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "swagger-express": "^1.0.5",
+    "request": "^2.88.0",
     "twilio": "^3.19.2"
   },
   "devDependencies": {
