@@ -54,7 +54,7 @@ const options = {
   swaggerURL: '/explorer',
   swaggerJSON: '/api-docs.json',
   swaggerUI: './server/views/swagger',
-  apis: ['./server/controllers/swagger-controller/user.js']
+  apis: ['./server/controllers/swagger-controller/user.js', './server/controllers/swagger-controller/notification.js']
 };
 
 app.use(init(app, options));
@@ -123,8 +123,8 @@ authPassport(app);
 const v1 = express.Router();
 v1.use('/auth', authRouter());
 v1.use('/push', pushRouter());
-app.use('/api/v1', v1);
-// app.use('/', v1);
+// app.use('/api/v1', v1);
+app.use('/', v1);
 app.get('/', function(req, res) {
   res.json({ msg: 'You just login as ' + new Date().toUTCString() });
 });

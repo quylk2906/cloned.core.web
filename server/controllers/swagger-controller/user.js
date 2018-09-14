@@ -6,7 +6,7 @@
 
 /**
  * @swagger
- * path: /api/v1/auth/users
+ * path: /auth/users
  * operations:
  *   -  httpMethod: GET
  *      summary: Get all users
@@ -30,7 +30,7 @@
 
 /**
  * @swagger
- * path: /api/v1/auth/signUp
+ * path: /auth/signUp
  * operations:
  *   -  httpMethod: POST
  *      summary: Register new user
@@ -61,7 +61,7 @@
 
 /**
  * @swagger
- * path: /api/v1/auth/users/{id}
+ * path: /auth/users/{id}
  * operations:
  *   -  httpMethod: GET
  *      summary: Get user profile
@@ -75,6 +75,110 @@
  *          paramType: path
  *          required: true
  *          dataType: string
+ *      errorResponses:
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+
+ /**
+ * @swagger
+ * path: /auth/facebook 
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Auth with facebook
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      errorResponses:
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+
+ /**
+ * @swagger
+ * path: /auth/google 
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Auth with google
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      errorResponses:
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+
+ /**
+ * @swagger
+ * path: /auth/twitter 
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Auth with twitter
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      errorResponses:
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ *        -
+ *          code: defaults
+ */
+
+ /**
+ * @swagger
+ * path: /auth/linkedin 
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Auth with linkedin
+ *      nickname: store
+ *      consumes:
+ *        - text/html
  *      errorResponses:
  *        -
  *          code: 200
