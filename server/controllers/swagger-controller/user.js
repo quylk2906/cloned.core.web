@@ -39,7 +39,37 @@
  *        - text/html
  *      parameters:
  *        - name: body
- *          description: body
+ *          description: enter email & password want to create
+ *          paramType: body
+ *          required: true
+ *          dataType: newUser
+ *
+ *      errorResponses:
+ *        -
+ *          code: 200
+ *          reason: OK
+ *        -
+ *          code: 400
+ *          reason: Invalid request params
+ *        -
+ *          code: 401
+ *          reason: Caller is not authenticated
+ *        -
+ *          code: 404
+ *          reason: Resource not found
+ */
+/**
+ * @swagger
+ * path: /auth/signIn
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: User login
+ *      nickname: store
+ *      consumes:
+ *        - text/html
+ *      parameters:
+ *        - name: body
+ *          description: enter username & password
  *          paramType: body
  *          required: true
  *          dataType: newUser
@@ -71,7 +101,7 @@
  *      parameters:
  *        - name: id
  *          in: path
- *          description: user id
+ *          description: enter user id
  *          paramType: path
  *          required: true
  *          dataType: string
@@ -103,7 +133,7 @@
  *        - text/html
  *      parameters:
  *        - name: body
- *          description: body
+ *          description: connect with facebook
  *          paramType: body
  *          required: true
  *          dataType: validate
@@ -136,7 +166,7 @@
  *        - text/html
  *      parameters:
  *        - name: body
- *          description: body
+ *          description: connect with google
  *          paramType: body
  *          required: true
  *          dataType: validate
@@ -169,7 +199,7 @@
  *        - text/html
  *      parameters:
  *        - name: body
- *          description: body
+ *          description: connect with linkedin
  *          paramType: body
  *          required: true
  *          dataType: validateLinkedin
