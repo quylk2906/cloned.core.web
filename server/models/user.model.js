@@ -22,7 +22,14 @@ const userModel = mongoose.Schema(
     provider: {
       type: String,
       default: 'local'
+    },
+    reset_password_token: {
+      type: String,
+    },
+    reset_password_expires: {
+      type: Date,
     }
+
   },
   {
     timestamps: true

@@ -1,12 +1,22 @@
 import User from '../models/user.model';
 import passport from 'passport';
 import request from 'request';
-import { signToken } from '../helpers/jwtHelper';
+import {
+  signToken
+} from '../helpers/jwtHelper';
+import nodeMailer from '../../server/api/nodemailer/index.js';
 import * as httpHelpers from '../helpers/httpResponseHelper';
-import { facebookConfig, googleConfig, twitterConfig, linkedinConfig } from '../config/index';
+import {
+  facebookConfig,
+  googleConfig,
+  twitterConfig,
+  linkedinConfig
+} from '../config/index';
 
 export const findUserByUsername = async username => {
-  return await User.findOne({ username: username });
+  return await User.findOne({
+    username: username
+  });
 };
 
 const handleRegisterUser = async (req, res, profile) => {
@@ -15,7 +25,11 @@ const handleRegisterUser = async (req, res, profile) => {
   let token = undefined;
   if (user) {
     token = signToken(user);
-    return httpHelpers.buildGetSuccessResponse(res, { message: 'The user exists in system.', user, token });
+    return httpHelpers.buildGetSuccessResponse(res, {
+      message: 'The user exists in system.',
+      user,
+      token
+    });
   }
   user = new User({
     // some of keys belong to specified social network.
@@ -26,7 +40,11 @@ const handleRegisterUser = async (req, res, profile) => {
 
   const rs = await user.save();
   token = signToken(rs);
-  return httpHelpers.buildGetSuccessResponse(res, { message: `Login with ${profile.provider} successfully.`, rs, token });
+  return httpHelpers.buildGetSuccessResponse(res, {
+    message: `Login with ${profile.provider} successfully.`,
+    rs,
+    token
+  });
 };
 
 const userController = () => {
@@ -58,7 +76,10 @@ const userController = () => {
       if (newUser) {
         const token = signToken(newUser);
 
-        return httpHelpers.buildPostSuccessResponse(res, { newUser, token });
+        return httpHelpers.buildPostSuccessResponse(res, {
+          newUser,
+          token
+        });
       } else {
         return httpHelpers.buildInternalServerErrorResponse(res, err);
       }
@@ -72,9 +93,13 @@ const userController = () => {
       const id = req.params.id;
       const user = await User.findById(id);
       if (user) {
-        httpHelpers.buildGetSuccessResponse(res, { user });
+        httpHelpers.buildGetSuccessResponse(res, {
+          user
+        });
       } else {
-        httpHelpers.buildNotFoundErrorResponse(res, { msg: 'User not found.' });
+        httpHelpers.buildNotFoundErrorResponse(res, {
+          msg: 'User not found.'
+        });
       }
     } catch (err) {
       httpHelpers.buildInternalServerErrorResponse(res, err);
@@ -83,7 +108,9 @@ const userController = () => {
 
   const getAll = async (req, res) => {
     const users = await User.find();
-    httpHelpers.buildGetSuccessResponse(res, { users });
+    httpHelpers.buildGetSuccessResponse(res, {
+      users
+    });
   };
 
   const authenticateLocal = async (req, res, next) => {
@@ -102,7 +129,9 @@ const userController = () => {
     }
 
     /* End of field Validation */
-    passport.authenticate('local', { session: false }, (authErr, user) => {
+    passport.authenticate('local', {
+      session: false
+    }, (authErr, user) => {
       try {
         if (authErr) {
           return next(authErr);
@@ -111,7 +140,9 @@ const userController = () => {
           return httpHelpers.buildNotFoundErrorResponse(res, 'User not found');
         }
         const token = signToken(user);
-        return httpHelpers.buildPostSuccessResponse(res, { token });
+        return httpHelpers.buildPostSuccessResponse(res, {
+          token
+        });
       } catch (err) {
         return httpHelpers.buildInternalServerErrorResponse(res, err);
       }
@@ -120,16 +151,22 @@ const userController = () => {
 
   const authenticateFacebook = (req, res) => {
     /* End of field Validation */
-    passport.authenticate('facebook', { session: false })(req, res);
+    passport.authenticate('facebook', {
+      session: false
+    })(req, res);
   };
 
   const authenticateFacebookCallback = (req, res, next) => {
-    passport.authenticate('facebook', { session: false }, async (authErr, facebookData) => {
+    passport.authenticate('facebook', {
+      session: false
+    }, async (authErr, facebookData) => {
       try {
         if (authErr) {
           return next(authErr);
         }
-        const { profile } = facebookData;
+        const {
+          profile
+        } = facebookData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
         return httpHelpers.buildInternalServerErrorResponse(res, err);
@@ -150,12 +187,16 @@ const userController = () => {
   };
 
   const authenticateGoogleCallback = (req, res, next) => {
-    passport.authenticate('google', { session: false }, async (authErr, googleData) => {
+    passport.authenticate('google', {
+      session: false
+    }, async (authErr, googleData) => {
       try {
         if (authErr) {
           return next(authErr);
         }
-        const { profile } = googleData;
+        const {
+          profile
+        } = googleData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
         httpHelpers.buildInternalServerErrorResponse(res, err);
@@ -165,13 +206,15 @@ const userController = () => {
 
   const authenticateLinkedin = (req, res) => {
     /* End of field Validation */
-    passport.authenticate('linkedin', { session: false, scope: ['r_emailaddress', 'r_basicprofile'] })(req, res);
+    passport.authenticate('linkedin', {
+      session: false,
+      scope: ['r_emailaddress', 'r_basicprofile']
+    })(req, res);
   };
 
   const authenticateLinkedinCallback = (req, res, next) => {
     passport.authenticate(
-      'linkedin',
-      {
+      'linkedin', {
         session: false
       },
       async (authErr, linkedinData) => {
@@ -179,7 +222,9 @@ const userController = () => {
           if (authErr) {
             return next(authErr);
           }
-          const { profile } = linkedinData;
+          const {
+            profile
+          } = linkedinData;
           await handleRegisterUser(req, res, profile);
         } catch (err) {
           httpHelpers.buildInternalServerErrorResponse(res, err);
@@ -189,7 +234,9 @@ const userController = () => {
   };
 
   const authenticateTwitter = (req, res) => {
-    passport.authenticate('twitter', { session: false })(req, res);
+    passport.authenticate('twitter', {
+      session: false
+    })(req, res);
   };
 
   const authenticateTwitterCallback = (req, res, next) => {
@@ -198,7 +245,9 @@ const userController = () => {
         if (authErr) {
           return next(authErr);
         }
-        const { profile } = twitterData;
+        const {
+          profile
+        } = twitterData;
         await handleRegisterUser(req, res, profile);
       } catch (err) {
         httpHelpers.buildInternalServerErrorResponse(res, err);
@@ -227,13 +276,21 @@ const userController = () => {
     };
     try {
       if (!req.body.access_token) {
-        return httpHelpers.buildValidationErrorResponse(res, { msg: 'Token is required!' });
+        return httpHelpers.buildValidationErrorResponse(res, {
+          msg: 'Token is required!'
+        });
       }
       // Step 1. Exchange authorization code for access token.
       // Step 2. Retrieve profile information about the current user.
-      request.get({ url: graphApiUrl, qs: params, json: true }, async (err, response, profile) => {
+      request.get({
+        url: graphApiUrl,
+        qs: params,
+        json: true
+      }, async (err, response, profile) => {
         if (response.statusCode !== 200) {
-          return httpHelpers.buildInternalServerErrorResponse(res, { message: profile.error.message });
+          return httpHelpers.buildInternalServerErrorResponse(res, {
+            message: profile.error.message
+          });
         }
         profile['provider'] = PROVIDER;
         await handleRegisterUser(req, res, profile);
@@ -255,13 +312,21 @@ const userController = () => {
     };
     try {
       if (!req.body.access_token) {
-        return httpHelpers.buildValidationErrorResponse(res, { msg: 'Token is required!' });
+        return httpHelpers.buildValidationErrorResponse(res, {
+          msg: 'Token is required!'
+        });
       }
       // Step 1. Exchange authorization code for access token. (we don't need it)
       // Step 2. Retrieve profile information about the current user.
-      request.get({ url: peopleApiUrl, qs: params, json: true }, async (err, response, profile) => {
+      request.get({
+        url: peopleApiUrl,
+        qs: params,
+        json: true
+      }, async (err, response, profile) => {
         if (response.statusCode !== 200) {
-          return httpHelpers.buildInternalServerErrorResponse(res, { message: profile.error.message });
+          return httpHelpers.buildInternalServerErrorResponse(res, {
+            message: profile.error.message
+          });
         }
         profile['provider'] = PROVIDER;
         await handleRegisterUser(req, res, profile);
@@ -285,13 +350,20 @@ const userController = () => {
 
     try {
       if (!req.body.code) {
-        return httpHelpers.buildValidationErrorResponse(res, { msg: 'Token is required!' });
+        return httpHelpers.buildValidationErrorResponse(res, {
+          msg: 'Token is required!'
+        });
       }
       // Step 1. Exchange authorization code for access token.
-      request.post(accessTokenUrl, { form: params, json: true }, function(err, response, body) {
+      request.post(accessTokenUrl, {
+        form: params,
+        json: true
+      }, function (err, response, body) {
         console.log('body', body);
         if (response.statusCode !== 200) {
-          return res.status(500).send({ message: body.error_description });
+          return res.status(500).send({
+            message: body.error_description
+          });
         }
 
         const parms = {
@@ -299,10 +371,13 @@ const userController = () => {
           format: 'json'
         };
         // Step 2. Retrieve profile information about the current user.
-        request.get({ url: peopleApiUrl, qs: parms, json: true }, function(err, response, profile) {
+        request.get({
+          url: peopleApiUrl,
+          qs: parms,
+          json: true
+        }, function (err, response, profile) {
           console.log('profile', profile);
-          if (req.header('Authorization')) {
-          }
+          if (req.header('Authorization')) {}
           // Step 1. Exchange authorization code for access token. (we don't need it)
           // Step 2. Retrieve profile information about the current user.
 
@@ -314,6 +389,90 @@ const userController = () => {
       httpHelpers.buildInternalServerErrorResponse(res, err);
     }
   };
+
+  const sendResetPasswordToken = async (req, res) => {
+    const {
+      username
+    } = req.body;
+    try {
+      let user = await findUserByUsername(username);
+      if (user) {
+        let token = signToken(user);
+        User.findByIdAndUpdate({
+            _id: user.id
+          }, {
+            reset_password_token: token,
+            reset_password_expires: Date.now() + 86400000
+          }, {
+            upsert: true,
+            new: true
+          })
+          .exec((err, new_user) => {
+            if (err) return httpHelpers.buildNotFoundErrorResponse(res, {
+              msg: err.message
+            });
+            else {
+              let email = user.username;
+              const rs = nodeMailer({
+                email,
+                token
+              }, false);
+              httpHelpers.buildPostSuccessResponse(res, {
+                msg: 'Email with token send successfull. Please confirm before token expried'
+              });
+            }
+          });
+      } else {
+        return httpHelpers.buildNotFoundErrorResponse(res, {
+          msg: 'Not found any user'
+        });
+      }
+    } catch (err) {
+      httpHelpers.buildInternalServerErrorResponse(res, err);
+    }
+  }
+
+  const resetPassword = (req, res, next) => {
+    const {
+      token,
+      newPassword1,
+      newPassword2
+    } = req.body;
+    try {
+      User.findOne({
+          reset_password_token: token,
+          reset_password_expires: {
+            $gt: Date.now()
+          }
+        })
+        .exec(async (err, user) => {
+          if (err && !user) return httpHelpers.buildNotFoundErrorResponse(res, {
+            msg: 'Wrong token or token expried.'
+          });
+          else {
+            if (newPassword1 && newPassword2 && newPassword1 === newPassword2) {
+              const isMatch = await user.isValidPassword(newPassword1);
+              if (isMatch === false) {
+                user.password = newPassword1;
+                const rs = await user.save();
+                return httpHelpers.buildPostSuccessResponse(res, {
+                  msg: 'Change password successfull'
+                }, rs);
+              } else {
+                return httpHelpers.buildNotFoundErrorResponse(res, {
+                  msg: 'New password cannot be the same as old '
+                });
+              }
+            } else
+              return httpHelpers.buildNotFoundErrorResponse(res, {
+                msg: 'Change password false'
+              });
+          }
+        });
+    } catch (err) {
+      httpHelpers.buildInternalServerErrorResponse(res, err);
+    }
+  }
 
   return {
     signUp,
@@ -331,7 +490,9 @@ const userController = () => {
     validateLinkedIn,
     profile,
     logout,
-    getAll
+    getAll,
+    sendResetPasswordToken,
+    resetPassword
   };
 };
 

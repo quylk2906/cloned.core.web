@@ -24,7 +24,7 @@ smtpTransport.use(
 );
 const nodeMailer = async (data, hasTemplate) => {
   let mailOptions = {};
-  const {email} = data;
+  const {email, token} = data;
   
   if (hasTemplate) {
     mailOptions = {
@@ -42,7 +42,8 @@ const nodeMailer = async (data, hasTemplate) => {
     subject: 'Notification email ( Not reply)', // Subject line
     template: 'notifi-email',
     context: {
-      name: email
+      name: email, 
+      url: 'http://localhost:5011/auth/reset_password?token=' + token,
     }
   };
   }

@@ -1,5 +1,6 @@
 import express from 'express';
 import userController from '../controllers/userController';
+import { auth } from 'firebase-admin';
 const authRouter = express.Router();
 const controller = userController();
 
@@ -35,6 +36,10 @@ const router = () => {
   authRouter.route('/users/:id').get(controller.profile);
 
   authRouter.route('/logout').get(controller.logout);
+
+  authRouter.route('/reset').post(controller.sendResetPasswordToken);
+
+  authRouter.route('/reset_password').post(controller.resetPassword);
 
   return authRouter;
 };
