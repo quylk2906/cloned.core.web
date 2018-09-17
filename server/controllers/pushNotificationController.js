@@ -1,14 +1,8 @@
 import twilio from 'twilio';
 import * as httpHelpers from '../helpers/httpResponseHelper';
 import nodeMailer from '../../server/api/nodemailer/index.js';
-import {
-  smsConfig
-} from '../config/index';
-import {
-  initializeApp,
-  credential as _credential,
-  messaging
-} from 'firebase-admin';
+import { smsConfig } from '../config/index';
+import { initializeApp, credential as _credential, messaging } from 'firebase-admin';
 
 // import serviceAccount from '../assets/tasty-d5d32-firebase-adminsdk-pc0ys-874e1cea47.json';
 const serviceAccount = require('../assets/tasty-d5d32-firebase-adminsdk-pc0ys-874e1cea47.json');
@@ -22,9 +16,7 @@ admin.initializeApp({
 const TIME_TO_LIVE = 0;
 
 const hanldePush = async (req, res) => {
-  const {
-    body
-  } = req;
+  const { body } = req;
   const deviceToken = body.deviceToken;
   const payload = {
     data: body.data || {}
@@ -51,44 +43,36 @@ const pushNotificationController = () => {
     await hanldePush(req, res);
   };
 
-  const multiPush = (req, res) => {
-    httpHelpers.buildGetSuccessResponse(res, {
-      msg: 'Login with facebook successfully'
-    });
+  const multiPush = async (req, res) => {
+    await hanldePush(req, res);
   };
 
   const sms = async (req, res) => {
-    const {
-      accountSid,
-      authToken,
-      fromNumber
-    } = smsConfig;
+    const { accountSid, authToken, fromNumber } = smsConfig;
     const client = new twilio(accountSid, authToken);
-    const {
-      reciveNumber,
-      content
-    } = req.body;
+    const { reciveNumber, content } = req.body;
     try {
       if (!reciveNumber && !content) {
         httpHelpers.buildNotFoundErrorResponse(res, {
-          msg: 'Can not find a phone number to send notify'
+          msg: 'Can not find a phone number to send notify.'
         });
       }
-      client.messages
-        .create({
+      client.messages.create(
+        {
           to: reciveNumber, //+841686326507 valid phone number
           body: content,
-          from: fromNumber,
-        }, (err, data)=>{
-          if(err) {
+          from: fromNumber
+        },
+        (err, data) => {
+          if (err) {
             return res.status(404).send({ send: false, message: err.message });
-          }
-          else {
+          } else {
             httpHelpers.buildPostSuccessResponse(res, {
               msg: 'Sms send successfull'
-            })
+            });
           }
-        })
+        }
+      );
     } catch (err) {
       httpHelpers.buildInternalServerErrorResponse(res);
     }
@@ -96,18 +80,18 @@ const pushNotificationController = () => {
 
   const email = async (req, res) => {
     try {
-      const {
-        email,
-        useTemplate
-      } = req.body;
+      const { email, useTemplate } = req.body;
       if (!email) {
         httpHelpers.buildNotFoundErrorResponse(res, {
           msg: 'Can not find email to send'
         });
       }
-      const rs = await nodeMailer({
-        email,
-      }, true);
+      const rs = await nodeMailer(
+        {
+          email
+        },
+        true
+      );
       httpHelpers.buildPostSuccessResponse(res, {
         msg: 'Email send successfull',
         rs

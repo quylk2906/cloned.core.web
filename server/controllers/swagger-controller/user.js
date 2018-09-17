@@ -92,113 +92,9 @@
  *          code: defaults
  */
 
- /**
+/**
  * @swagger
- * path: /auth/facebook 
- * operations:
- *   -  httpMethod: GET
- *      summary: Auth with facebook
- *      nickname: store
- *      consumes:
- *        - text/html
- *      errorResponses:
- *        -
- *          code: 200
- *          reason: OK
- *        -
- *          code: 400
- *          reason: Invalid request params
- *        -
- *          code: 401
- *          reason: Caller is not authenticated
- *        -
- *          code: 404
- *          reason: Resource not found
- *        -
- *          code: defaults
- */
-
- /**
- * @swagger
- * path: /auth/google 
- * operations:
- *   -  httpMethod: GET
- *      summary: Auth with google
- *      nickname: store
- *      consumes:
- *        - text/html
- *      errorResponses:
- *        -
- *          code: 200
- *          reason: OK
- *        -
- *          code: 400
- *          reason: Invalid request params
- *        -
- *          code: 401
- *          reason: Caller is not authenticated
- *        -
- *          code: 404
- *          reason: Resource not found
- *        -
- *          code: defaults
- */
-
- /**
- * @swagger
- * path: /auth/twitter 
- * operations:
- *   -  httpMethod: GET
- *      summary: Auth with twitter
- *      nickname: store
- *      consumes:
- *        - text/html
- *      errorResponses:
- *        -
- *          code: 200
- *          reason: OK
- *        -
- *          code: 400
- *          reason: Invalid request params
- *        -
- *          code: 401
- *          reason: Caller is not authenticated
- *        -
- *          code: 404
- *          reason: Resource not found
- *        -
- *          code: defaults
- */
-
- /**
- * @swagger
- * path: /auth/linkedin 
- * operations:
- *   -  httpMethod: GET
- *      summary: Auth with linkedin
- *      nickname: store
- *      consumes:
- *        - text/html
- *      errorResponses:
- *        -
- *          code: 200
- *          reason: OK
- *        -
- *          code: 400
- *          reason: Invalid request params
- *        -
- *          code: 401
- *          reason: Caller is not authenticated
- *        -
- *          code: 404
- *          reason: Resource not found
- *        -
- *          code: defaults
- */
-
- /**
- * @swagger
- * path: /auth/facebook/validate 
+ * path: /auth/facebook/validate
  * operations:
  *   -  httpMethod: POST
  *      summary: Validate facebook accesstoken
@@ -211,8 +107,8 @@
  *          paramType: body
  *          required: true
  *          dataType: validate
- * 
- *      errorResponses:  
+ *
+ *      errorResponses:
  *        -
  *          code: 200
  *          reason: OK
@@ -229,9 +125,9 @@
  *          code: defaults
  */
 
- /**
+/**
  * @swagger
- * path: /auth/google/validate 
+ * path: /auth/google/validate
  * operations:
  *   -  httpMethod: POST
  *      summary: Validate Google accesstoken
@@ -244,8 +140,8 @@
  *          paramType: body
  *          required: true
  *          dataType: validate
- * 
- *      errorResponses:  
+ *
+ *      errorResponses:
  *        -
  *          code: 200
  *          reason: OK
@@ -262,9 +158,9 @@
  *          code: defaults
  */
 
- /**
+/**
  * @swagger
- * path: /auth/linkedin/validate 
+ * path: /auth/linkedin/validate
  * operations:
  *   -  httpMethod: POST
  *      summary: Validate Linkedin accesstoken
@@ -277,8 +173,8 @@
  *          paramType: body
  *          required: true
  *          dataType: validateLinkedin
- * 
- *      errorResponses:  
+ *
+ *      errorResponses:
  *        -
  *          code: 200
  *          reason: OK
@@ -294,8 +190,6 @@
  *        -
  *          code: defaults
  */
- 
-
 
 /**
  * @swagger
